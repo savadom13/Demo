@@ -7,17 +7,24 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Demo.Models;
+using Demo.Repositoryes;
 
 namespace Demo.Controllers
 {
     public class CustomersController : Controller
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        //private ApplicationDbContext db = new ApplicationDbContext();
+        private IGenericRepository<Customer> _customerRepository; // = new CustomerRepository();
+
+        public CustomersController(IGenericRepository<Customer> customerRepository)
+        {
+            this._customerRepository = customerRepository;
+        }
 
         // GET: Customers
         public ActionResult Index()
         {
-            return View(db.Customers.ToList());
+            return View(_customerRepository.GetAll().ToList());
         }
 
         // GET: Customers/Details/5
@@ -27,7 +34,7 @@ namespace Demo.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customer customer = db.Customers.Find(id);
+            Customer customer = _customerRepository.FindById((int)id);
             if (customer == null)
             {
                 return HttpNotFound();
@@ -42,16 +49,13 @@ namespace Demo.Controllers
         }
 
         // POST: Customers/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,FirstName,LastName,PhoneNumber,Email")] Customer customer)
         {
             if (ModelState.IsValid)
             {
-                db.Customers.Add(customer);
-                db.SaveChanges();
+                _customerRepository.Add(customer);
                 return RedirectToAction("Index");
             }
 
@@ -65,7 +69,7 @@ namespace Demo.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customer customer = db.Customers.Find(id);
+            Customer customer = _customerRepository.FindById((int)id);
             if (customer == null)
             {
                 return HttpNotFound();
@@ -74,16 +78,14 @@ namespace Demo.Controllers
         }
 
         // POST: Customers/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,FirstName,LastName,PhoneNumber,Email")] Customer customer)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(customer).State = EntityState.Modified;
-                db.SaveChanges();
+                _customerRepository.Edit(customer);
+
                 return RedirectToAction("Index");
             }
             return View(customer);
@@ -96,7 +98,7 @@ namespace Demo.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customer customer = db.Customers.Find(id);
+            Customer customer = _customerRepository.FindById((int)id);
             if (customer == null)
             {
                 return HttpNotFound();
@@ -109,19 +111,9 @@ namespace Demo.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Customer customer = db.Customers.Find(id);
-            db.Customers.Remove(customer);
-            db.SaveChanges();
+            Customer customer = _customerRepository.FindById(id);
+            _customerRepository.Remove(customer);
             return RedirectToAction("Index");
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
         }
     }
 }
