@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
+﻿using Demo.Models;
+using Demo.Repositoryes;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using Demo.Models;
-using Demo.Repositoryes;
 
 namespace Demo.Controllers
 {
@@ -39,7 +34,7 @@ namespace Demo.Controllers
             {
                 return HttpNotFound();
             }
-            return View(customer);
+            return PartialView(customer);
         }
 
         // GET: Customers/Create
