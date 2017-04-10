@@ -8,68 +8,97 @@
 <h2>Index</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+        Create
+    </button>
 </p>
+
+
 
 <div id="modDialog" class="modal fade">
     <div id="dialogContent" class="modal-dialog"></div>
 </div>
 
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.FirstName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.LastName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.PhoneNumber)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Email)
-        </th>
-        <th></th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.FirstName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.LastName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PhoneNumber)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id } , new { @class = "compItem" }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
+<div id="myModal" class="modal fade">
+    <div class="modal-body" id="form-container">
+        @Html.Action("Create", "Customers")
+        @*@Html.Partial("Create")*@
+    </div>
+</div>
 
-</table>
 
-@section scripts
-{
-    <script type="text/javascript">
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PhoneNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th></th>
+        </tr>
 
-        $(function() {
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhoneNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }, new { @class = "compItem" }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+        }
+
+    </table>
+
+    @section scripts{
+        <script type="text/javascript">
+            $("#myModal").on("submit", "#form-createCustomer", function (e) {
+                e.preventDefault();  // prevent standard form submission
+
+                var form = $(this);
+                $.ajax({
+                    //type: "POST",
+                    url: form.attr('action'),
+                    type: form.attr('method'),  // post
+                    data: form.serialize(),
+                    success: function (partialResult) {
+                        $("#form-container").html(partialResult);
+                    }
+                });
+            });
+            $(function () {
                 $.ajaxSetup({ cache: false });
                 $(".compItem").click(function (e) {
 
-                e.preventDefault();
-                $.get(this.href, function(data) {
+                    e.preventDefault();
+                    $.get(this.href, function (data) {
                         $('#dialogContent').html(data);
                         $('#modDialog').modal('show');
+                    });
                 });
-            });
-        })
-    </script>
-}
+
+                
+            })
+
+        </script>
+    }

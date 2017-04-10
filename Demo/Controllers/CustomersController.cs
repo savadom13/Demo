@@ -40,7 +40,7 @@ namespace Demo.Controllers
         // GET: Customers/Create
         public ActionResult Create()
         {
-            return View();
+            return PartialView("_Create");
         }
 
         // POST: Customers/Create
@@ -51,10 +51,10 @@ namespace Demo.Controllers
             if (ModelState.IsValid)
             {
                 _customerRepository.Add(customer);
-                return RedirectToAction("Index");
+                return PartialView("_CustomerCreateSuccess");
             }
 
-            return View(customer);
+            return PartialView("_Create", customer);
         }
 
         // GET: Customers/Edit/5
