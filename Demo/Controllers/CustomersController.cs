@@ -1,6 +1,5 @@
 ﻿using Demo.Models;
 using Demo.Repositoryes;
-using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 
@@ -19,7 +18,7 @@ namespace Demo.Controllers
         // GET: Customers
         public ActionResult Index()
         {
-            return View(_customerRepository.GetAll().ToList());
+            return View();
         }
 
         // GET: Customers/Details/5
