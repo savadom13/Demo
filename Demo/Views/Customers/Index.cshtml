@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<h2>Customers list</h2>
 
 <p>
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modCreateCustomer">
@@ -13,12 +13,9 @@
     </button>
 </p>
 
-
-
-<div id="modDetailDialog" class="modal fade">
-    <div id="contentDetailDialog" class="modal-dialog"></div>
+<div id="modDialog" class="modal fade">
+    <div id="dialogContent" class="modal-dialog"></div>
 </div>
-
 
 <div id="modCreateCustomer" class="modal fade">
     <div class="modal-body" id="form-container">
@@ -45,64 +42,75 @@
         <th></th>
     </tr>
     </thead>
-
     <tbody>
     </tbody>
 </table>
 
+<a id="vbutton" data-role="button" href="/Customers/Details/11">Click Button</a>
+
 @section scripts
 {
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
+
+            $("#vbutton").click(function (e) {
+                alert('button clicked');
+                e.preventDefault();
+                //$.get(this.href, function (data) {
+                //    $("#dialogContent").html(data);
+                //    $("#modDialog").modal("show");
+                //});
+            });
+
             $("#customers").DataTable({
                 ajax: {
                     url: "/api/customers",
                     dataSrc: ""
                 },
                 columns: [
-                {
-                    data: "firstName"
-                },
-                {
-                    data: "lastName"
-                },
-                {
-                    data: "phoneNumber"
-                },
-                {
-                    data: "email"
-                }
+                    {
+                        data: "firstName"
+                    },
+                    {
+                        data: "lastName"
+                    },
+                    {
+                        data: "phoneNumber"
+                    },
+                    {
+                        data: "email"
+                    },
+                    {
+                        data: "id",
+                        render: function(data, type, customer) {
+                            return "<a href='/Customers/Edit/" + data + "'>" + 'Edit' + "</a>" + " " +
+                                "<a id='vbutton' data-role='button' href='/Customers/Details/" + data + "'>" + 'Details' + "</a>" + " " +
+                                "<a href='/Customers/Delete/" + data + "'>" + 'Delete' + "</a>";
+                        }
+                    }
 
-        ]
-        });
-
-        $("#modCreateCustomer").on("submit", "#form-createCustomer", function(e) {
-            e.preventDefault(); // prevent standard form submission
-
-            var form = $(this);
-            $.ajax({
-                //type: "POST",
-                url: form.attr('action'),
-                type: form.attr('method'), // post
-                data: form.serialize(),
-                success: function(partialResult) {
-                    $("#form-container").html(partialResult);
-                }
+                ]
             });
-        });
 
-        $(function() {
-            $.ajaxSetup({ cache: false });
-            $(".itemDetailDialog").click(function(e) {
 
-                e.preventDefault();
-                $.get(this.href, function(data) {
-                    $('#contentDetailDialog').html(data);
-                    $('#modDetailDialog').modal('show');
+
+            $("#modCreateCustomer").on("submit", "#form-createCustomer", function(e) {
+                e.preventDefault(); // prevent standard form submission
+
+                var form = $(this);
+                $.ajax({
+                    //type: "POST",
+                    url: form.attr('action'),
+                    type: form.attr('method'), // post
+                    data: form.serialize(),
+                    success: function(partialResult) {
+                        $("#form-container").html(partialResult);
+                    }
                 });
             });
+
         });
 
-    });
-</script>
+
+    </script>
 }
