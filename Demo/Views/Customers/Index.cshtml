@@ -53,18 +53,21 @@
     <script>
         $(document).ready(function () {
 
-            $("#vbutton").click(function (e) {
-                alert('button clicked');
+            $.ajaxSetup({ cache: false });
+
+            $("#customers").on("click", ".js-detail", function (e) {
+                //alert('button clicked');
                 e.preventDefault();
-                //$.get(this.href, function (data) {
-                //    $("#dialogContent").html(data);
-                //    $("#modDialog").modal("show");
-                //});
+                $.get(this.href, function (data) {
+                    $("#dialogContent").html(data);
+                    $("#modDialog").modal("show");
+                });
             });
 
             $("#customers").DataTable({
                 ajax: {
-                    url: "/api/customers",
+                    cache: false,
+                    url: "../api/customers",
                     dataSrc: ""
                 },
                 columns: [
@@ -84,7 +87,7 @@
                         data: "id",
                         render: function(data, type, customer) {
                             return "<a href='/Customers/Edit/" + data + "'>" + 'Edit' + "</a>" + " " +
-                                "<a id='vbutton' data-role='button' href='/Customers/Details/" + data + "'>" + 'Details' + "</a>" + " " +
+                                "<a class='btn-link js-detail' data-customer-id=" + data + " href='/Customers/Details/" + data + "'>" + 'Details' + "</a>" + " " +
                                 "<a href='/Customers/Delete/" + data + "'>" + 'Delete' + "</a>";
                         }
                     }
